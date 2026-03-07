@@ -3,7 +3,7 @@
 // 1. Data Anggota
 const MEMBERS = [
     "Ilham", "Ali", "Ibrahim", "Yahya", "Falih", "Sa'ad", 
-    "Nizar", "Hamzah", "Bilal", "Kholid", "Abdurrahman", "Ihsan"
+    "Nizar", "Hamzah", "Bilal", "Kholid", "Abdurrahman", "Jarir", "Hudzaifah"
 ];
 
 // Generate List Bulan (2 tahun range)
@@ -213,3 +213,4 @@ const updateHeaderDate = () => {
 updateHeaderDate();
 
 render();
+
