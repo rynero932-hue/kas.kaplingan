@@ -128,8 +128,8 @@ monthSelector.addEventListener('change', (e) => {
 // Admin Control
 document.getElementById('adminBtn').addEventListener('click', () => {
     if(!state.isAdmin) {
-        const pass = prompt("Password Admin:");
-        if(pass === "admin123") {
+        const pass = prompt("Password *****:");
+        if(pass === "admin932") {
             state.isAdmin = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
             document.body.classList.add('admin-mode');
@@ -211,4 +211,5 @@ const updateHeaderDate = () => {
 
 // Mulai Aplikasi
 updateHeaderDate();
+
 render();
