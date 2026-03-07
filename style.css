@@ -1,0 +1,52 @@
+/* style.css */
+@media (max-width: 640px) {
+    input, select, textarea {
+        font-size: 16px !important; /* Mencegah auto-zoom layar di HP */
+    }
+}
+
+body {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); border-radius: 10px; }
+
+/* Animations */
+.stat-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.member-card {
+    background: #161b2c;
+    border: 1px solid rgba(255,255,255,0.02);
+    transition: all 0.3s ease;
+}
+
+.member-card.is-paid {
+    border-color: rgba(16, 185, 129, 0.3);
+    background: linear-gradient(145deg, #161b2c, #111625);
+    box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.1);
+}
+
+.admin-mode .member-card:active {
+    transform: scale(0.95);
+}
+
+.admin-mode #adminBtn {
+    background: #10b981 !important;
+    color: #0b0f1a !important;
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+}
+
+input, select, textarea {
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus {
+    background: rgba(16, 185, 129, 0.05) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+}
