@@ -1,52 +1,40 @@
 /* style.css */
-@media (max-width: 640px) {
-    input, select, textarea {
-        font-size: 16px !important; /* Mencegah auto-zoom layar di HP */
-    }
+@keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
 }
+.animate-bounce-slow { animation: bounce-slow 4s infinite ease-in-out; }
 
-body {
-    -webkit-tap-highlight-color: transparent;
+input, textarea {
+    background: #181818 !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-radius: 1.25rem !important;
+    padding: 1.25rem !important;
+    color: white !important;
+    width: 100%;
+    outline: none;
 }
-
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); border-radius: 10px; }
-
-/* Animations */
-.stat-card {
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+input:focus { border-color: #facc15 !important; }
 
 .member-card {
-    background: #161b2c;
+    background: #0d0d0d;
     border: 1px solid rgba(255,255,255,0.02);
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
+.member-card:hover {
+    background: #121212;
+    transform: translateX(5px);
+}
 .member-card.is-paid {
-    border-color: rgba(16, 185, 129, 0.3);
-    background: linear-gradient(145deg, #161b2c, #111625);
-    box-shadow: 0 15px 30px -10px rgba(16, 185, 129, 0.1);
+    border-left: 4px solid #facc15;
 }
 
-.admin-mode .member-card:active {
-    transform: scale(0.95);
+#appContent.open {
+    opacity: 1 !important;
+    transform: scale(1) !important;
 }
 
-.admin-mode #adminBtn {
-    background: #10b981 !important;
-    color: #0b0f1a !important;
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
-}
-
-input, select, textarea {
-    outline: none;
-    transition: all 0.3s ease;
-}
-
-input:focus, textarea:focus {
-    background: rgba(16, 185, 129, 0.05) !important;
-    border-color: rgba(16, 185, 129, 0.3) !important;
+#splashScreen.exit {
+    transform: translateY(-100%) scale(1.1);
+    opacity: 0;
 }
