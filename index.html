@@ -3,165 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pemuda Wonogiri | APP CATATAN KAS</title>
-    <!-- Favicon -->
-    <link rel="icon" href="https://via.placeholder.com/32/10b981/ffffff?text=$">
-    <!-- Tailwind & Icons -->
+    <title>Pemuda Wonogiri | Pro Cash Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-[#0b0f1a] text-slate-200 font-['Plus_Jakarta_Sans']">
+<body class="bg-[#050505] text-white font-['Plus_Jakarta_Sans'] overflow-x-hidden">
 
-    <!-- Desktop Sidebar -->
-    <aside class="fixed left-0 top-0 h-screen w-20 hidden lg:flex flex-col items-center py-8 bg-[#111625] border-r border-white/5 z-50">
-        <div class="w-12 h-12 bg-emerald-500 rounded-2xl flex items-center justify-center text-slate-900 shadow-lg shadow-emerald-500/20 mb-10">
-            <i data-lucide="banknote" size="24"></i>
+    <!-- SPLASH SCREEN INTRO -->
+    <div id="splashScreen" class="fixed inset-0 z-[100] bg-[#050505] flex flex-col items-center justify-center p-6 text-center transition-all duration-1000">
+        <div class="mb-8 p-8 bg-[#facc15] rounded-[3.5rem] shadow-[0_0_60px_rgba(250,204,21,0.2)] animate-bounce-slow">
+            <i data-lucide="layout-dashboard" size="64" class="text-black"></i>
         </div>
-        <nav class="flex flex-col gap-8 text-slate-500">
-            <i data-lucide="layout-grid" class="cursor-pointer text-emerald-400"></i>
-            <i data-lucide="history" class="cursor-pointer hover:text-emerald-400 transition-colors"></i>
-            <i data-lucide="calendar-range" class="cursor-pointer hover:text-emerald-400 transition-colors"></i>
-        </nav>
-    </aside>
+        <h1 class="text-4xl font-black mb-2 tracking-tighter">Ahlan wa sahlan akhy</h1>
+        <p class="text-slate-500 mb-12 font-medium tracking-wide italic">Buku catatan kas online kita</p>
+        <button id="entryBtn" class="bg-[#facc15] text-black px-16 py-5 rounded-2xl font-black text-lg shadow-[0_15px_30px_rgba(250,204,21,0.3)] active:scale-95 transition-all uppercase tracking-[0.2em]">
+            Masuk Aplikasi
+        </button>
+    </div>
 
-    <main class="lg:ml-20 min-h-screen pb-20">
-        <!-- Header -->
-        <header class="sticky top-0 z-[40] bg-[#0b0f1a]/80 backdrop-blur-xl border-b border-white/5 px-6 py-5">
-            <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- MAIN APP -->
+    <div id="appContent" class="hidden opacity-0 scale-95 transition-all duration-1000">
+        <!-- Sticky Header -->
+        <header class="sticky top-0 z-40 bg-[#050505]/95 backdrop-blur-2xl border-b border-white/5 px-6 py-6">
+            <div class="max-w-2xl mx-auto flex items-center justify-between">
                 <div>
-                    <!-- Nama Bulan (Selector) -->
-                    <select id="monthSelector" class="bg-transparent text-2xl md:text-3xl font-black tracking-tighter outline-none cursor-pointer text-white border-none p-0 focus:ring-0 appearance-none">
-                        <!-- Diisi oleh JS -->
-                    </select>
-                    <!-- Tanggal Hari Ini -->
-                    <p id="headerTodayDate" class="text-[11px] md:text-xs text-emerald-500 font-bold uppercase tracking-[0.2em] mt-1">
-                        Sabtu, 7 Maret 2026
-                    </p>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <!-- Tombol Admin (Selalu terlihat di HP) -->
-                    <button id="adminBtn" class="p-3 bg-white/5 rounded-2xl text-slate-400 hover:bg-emerald-500/10 hover:text-emerald-400 transition-all border border-white/10 shadow-sm active:scale-90">
-                        <i data-lucide="shield-check" size="22"></i>
-                    </button>
-                    
-                    <!-- Logo Duit -->
-                    <div class="flex items-center gap-3 bg-[#161b2c] p-1.5 pr-4 rounded-[1.2rem] border border-white/5 shadow-inner">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-900 shadow-lg shadow-emerald-500/20">
-                            <i data-lucide="coins" size="20"></i>
-                        </div>
-                        <div class="hidden sm:block leading-none">
-                            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Bendahara</p>
-                            <p class="text-[12px] font-black text-white">Cah Wonogiri</p>
-                        </div>
+                    <div class="flex items-center gap-2">
+                        <select id="monthSelector" class="bg-[#facc15] text-black text-lg font-black rounded-xl px-4 py-1.5 outline-none border-none cursor-pointer"></select>
                     </div>
+                    <p id="currentDateDisplay" class="text-[10px] font-black uppercase tracking-widest mt-2 text-emerald-500"></p>
+                </div>
+                <div class="flex gap-2">
+                    <button id="shareBtn" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 active:bg-emerald-500 active:text-black transition-all">
+                        <i data-lucide="share-2" size="22"></i>
+                    </button>
+                    <button id="adminBtn" class="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center border border-white/10 active:bg-[#facc15] active:text-black transition-all">
+                        <i data-lucide="shield-lock" size="22"></i>
+                    </button>
                 </div>
             </div>
         </header>
 
-        <div class="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        <main class="max-w-2xl mx-auto px-6 py-8 space-y-10 pb-32">
             
-            <!-- Stats Dashboard -->
-            <section class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                <!-- Saldo Kas -->
-                <div class="stat-card bg-emerald-500 p-8 rounded-[2.5rem] text-slate-900 relative overflow-hidden group">
+            <!-- Dashboard Modern Card -->
+            <section class="space-y-4">
+                <div class="bg-gradient-to-br from-[#facc15] to-[#eab308] p-10 rounded-[3.5rem] text-black shadow-2xl relative overflow-hidden group">
                     <div class="relative z-10">
-                        <p class="font-bold uppercase tracking-widest text-[10px] opacity-70 mb-1">Total Saldo Kas</p>
-                        <h2 id="totalSaldo" class="text-4xl font-black tracking-tighter">Rp 0</h2>
+                        <p class="font-black text-[10px] uppercase tracking-[0.3em] opacity-50 mb-1">Saldo Kas Saat Ini</p>
+                        <h2 id="totalSaldo" class="text-5xl font-black tracking-tighter">Rp 0</h2>
+                        
+                        <!-- Progress Bar Iuran -->
+                        <div class="mt-8 space-y-2">
+                            <div class="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                <span>Koleksi Iuran Bulan Ini</span>
+                                <span id="progressText">0%</span>
+                            </div>
+                            <div class="w-full h-3 bg-black/10 rounded-full overflow-hidden border border-black/5">
+                                <div id="progressBar" class="h-full bg-black transition-all duration-1000" style="width: 0%"></div>
+                            </div>
+                        </div>
                     </div>
-                    <i data-lucide="wallet" class="absolute -right-4 -bottom-4 w-28 h-28 opacity-10 group-hover:scale-110 transition-transform"></i>
+                    <i data-lucide="banknote" class="absolute -right-6 -bottom-6 w-40 h-40 opacity-10 group-hover:rotate-12 transition-transform duration-700"></i>
                 </div>
 
-                <!-- Pemasukan -->
-                <div class="stat-card bg-[#161b2c] p-8 rounded-[2.5rem] border border-white/5 flex items-center justify-between group">
-                    <div>
-                        <p id="labelPemasukanBulan" class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-1 text-emerald-400 italic">Pemasukan Bulan Ini</p>
-                        <h2 id="totalPemasukan" class="text-3xl font-black text-white tracking-tighter">Rp 0</h2>
+                <!-- Stats Mini -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-[#111] p-6 rounded-[2.5rem] border border-white/5">
+                        <p class="text-[9px] font-black text-emerald-500 uppercase tracking-widest mb-2 italic">Iuran Masuk</p>
+                        <h3 id="totalPemasukan" class="text-xl font-extrabold text-white">Rp 0</h3>
                     </div>
-                    <div class="w-14 h-14 bg-emerald-500/10 rounded-[1.2rem] flex items-center justify-center text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500 group-hover:text-slate-900 transition-all">
-                        <i data-lucide="trending-up" size="28"></i>
-                    </div>
-                </div>
-
-                <!-- Pengeluaran -->
-                <div class="stat-card bg-[#161b2c] p-8 rounded-[2.5rem] border border-white/5 flex items-center justify-between group">
-                    <div>
-                        <p class="text-slate-500 font-bold uppercase tracking-widest text-[10px] mb-1 text-rose-400 italic">Pengeluaran Kas</p>
-                        <h2 id="totalPengeluaran" class="text-3xl font-black text-white tracking-tighter">Rp 0</h2>
-                    </div>
-                    <div class="w-14 h-14 bg-rose-500/10 rounded-[1.2rem] flex items-center justify-center text-rose-400 border border-rose-500/20 group-hover:bg-rose-500 group-hover:text-white transition-all">
-                        <i data-lucide="trending-down" size="28"></i>
+                    <div class="bg-[#111] p-6 rounded-[2.5rem] border border-white/5">
+                        <p class="text-[9px] font-black text-rose-500 uppercase tracking-widest mb-2 italic text-rose-500">Total Keluar</p>
+                        <h3 id="totalPengeluaran" class="text-xl font-extrabold text-white">Rp 0</h3>
                     </div>
                 </div>
             </section>
 
-            <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
-                <!-- Member Grid -->
-                <div class="xl:col-span-8 space-y-6">
-                    <div class="flex items-center justify-between px-2">
-                        <h3 class="text-xl font-black flex items-center gap-3 text-white uppercase tracking-tighter">
-                            <span class="w-1.5 h-7 bg-emerald-500 rounded-full shadow-[0_0_15px_#10b981]"></span>
-                            Status Iuran
-                        </h3>
-                        <div class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black text-slate-400 tracking-widest uppercase">
-                            Iuran: Rp 10.000
-                        </div>
-                    </div>
-                    <div id="memberGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
-                        <!-- JS Rendered -->
+            <!-- Member List Section -->
+            <section class="space-y-6">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 px-2">
+                    <h3 class="text-xs font-black uppercase tracking-[0.4em] text-slate-500 flex items-center gap-3">
+                        List Anggota Iuran
+                    </h3>
+                    <div class="relative group">
+                        <i data-lucide="search" size="14" class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600"></i>
+                        <input type="text" id="searchMember" placeholder="Cari nama..." class="bg-[#111] border border-white/5 rounded-full py-2.5 pl-10 pr-6 text-xs font-bold outline-none focus:border-[#facc15] transition-all w-full md:w-48">
                     </div>
                 </div>
-
-                <!-- Info Sidebar -->
-                <div class="xl:col-span-4 space-y-8">
-                    <!-- Log Pengeluaran -->
-                    <div class="bg-[#111625] rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
-                        <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/2">
-                            <h3 class="font-black text-xs uppercase tracking-widest flex items-center gap-3"><i data-lucide="receipt" size="18" class="text-emerald-500"></i> Log Pengeluaran</h3>
-                            <button onclick="openExpenseModal()" class="admin-only hidden w-10 h-10 bg-emerald-500 rounded-xl flex items-center justify-center text-slate-900 shadow-lg shadow-emerald-500/20 active:scale-90 transition-all">
-                                <i data-lucide="plus" size="22"></i>
-                            </button>
-                        </div>
-                        <div id="expenseList" class="p-4 space-y-3 max-h-[350px] overflow-y-auto">
-                            <!-- JS -->
-                        </div>
-                    </div>
-
-                    <!-- Agenda Section -->
-                    <div class="bg-gradient-to-b from-[#161b2c] to-[#111625] rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
-                        <div class="p-6 border-b border-white/5 flex justify-between items-center bg-white/2">
-                            <h3 class="font-black text-xs uppercase tracking-widest flex items-center gap-3"><i data-lucide="calendar-check" size="18" class="text-emerald-500"></i> Agenda & Info</h3>
-                            <button onclick="openAgendaModal()" class="admin-only hidden w-10 h-10 border border-white/10 bg-white/5 rounded-xl flex items-center justify-center hover:bg-white/10 transition-all">
-                                <i data-lucide="plus" size="22"></i>
-                            </button>
-                        </div>
-                        <div id="agendaList" class="p-6 space-y-6">
-                            <!-- JS -->
-                        </div>
-                    </div>
+                
+                <div id="memberList" class="space-y-2.5">
+                    <!-- JS Rendered -->
                 </div>
+            </section>
+
+            <!-- Logs Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Log Pengeluaran -->
+                <section class="bg-[#0f0f0f] rounded-[3rem] border border-white/5 p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h4 class="font-black text-[10px] uppercase tracking-widest text-slate-500">Log Pengeluaran</h4>
+                        <button onclick="openExpenseModal()" class="admin-only hidden w-9 h-9 bg-[#facc15] rounded-full text-black flex items-center justify-center active:scale-90 transition-all"><i data-lucide="plus" size="20"></i></button>
+                    </div>
+                    <div id="expenseLog" class="space-y-4 max-h-72 overflow-y-auto pr-2"></div>
+                </section>
+
+                <!-- Agenda -->
+                <section class="bg-[#0f0f0f] rounded-[3rem] border border-white/5 p-8">
+                    <div class="flex justify-between items-center mb-8">
+                        <h4 class="font-black text-[10px] uppercase tracking-widest text-slate-500">Agenda Kegiatan</h4>
+                        <button onclick="openAgendaModal()" class="admin-only hidden w-9 h-9 border border-white/10 rounded-full text-[#facc15] flex items-center justify-center active:scale-90 transition-all"><i data-lucide="plus" size="20"></i></button>
+                    </div>
+                    <div id="agendaLog" class="space-y-4 max-h-72 overflow-y-auto pr-2"></div>
+                </section>
             </div>
-        </div>
-    </main>
 
-    <!-- Footer dengan Link WhatsApp -->
-    <footer class="text-center py-12 border-t border-white/5 mx-6">
-        <a href="https://wa.me/6281286467275" target="_blank" class="inline-flex flex-col items-center gap-2 group transition-all">
-            <span class="text-slate-600 text-[10px] tracking-[0.5em] uppercase font-black group-hover:text-emerald-500 transition-all">Created by aidesign</span>
-            <div class="w-8 h-1 bg-emerald-500/20 rounded-full group-hover:w-20 group-hover:bg-emerald-500 transition-all"></div>
-        </a>
-    </footer>
+            <!-- ADMIN TOOLBOX (Backup) -->
+            <section class="admin-only hidden pt-10 border-t border-white/5 space-y-4 text-center">
+                <p class="text-[10px] font-black text-slate-700 uppercase tracking-widest">Admin Data Management</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="exportData()" class="px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all flex items-center gap-2">
+                        <i data-lucide="download" size="14"></i> Backup Data
+                    </button>
+                    <label class="px-6 py-3 bg-white/5 border border-white/10 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all flex items-center gap-2 cursor-pointer">
+                        <i data-lucide="upload" size="14"></i> Restore Data
+                        <input type="file" id="importFile" class="hidden" accept=".json">
+                    </label>
+                </div>
+            </section>
+        </main>
 
-    <!-- Universal Modal -->
-    <div id="modalOverlay" class="fixed inset-0 bg-[#070912]/95 backdrop-blur-2xl z-[100] hidden items-center justify-center p-4">
-        <div class="bg-[#161b2c] border border-white/10 p-8 rounded-[3rem] w-full max-w-md shadow-2xl">
-            <h3 id="modalTitle" class="text-2xl font-black mb-6 text-white tracking-tighter uppercase">Input Data</h3>
+        <footer class="py-16 text-center border-t border-white/5 mx-8">
+            <a href="https://wa.me/6281286467275" target="_blank" class="group inline-flex flex-col items-center">
+                <span class="text-[10px] font-black tracking-[0.6em] text-slate-800 group-hover:text-[#facc15] transition-all">CREATED BY AIDESIGN</span>
+                <div class="w-10 h-[2px] bg-slate-900 mt-2 group-hover:w-24 group-hover:bg-[#facc15] transition-all"></div>
+            </a>
+        </footer>
+    </div>
+
+    <!-- MODAL -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/98 backdrop-blur-3xl z-[60] hidden items-center justify-center p-6">
+        <div class="bg-[#111] border border-white/10 w-full max-w-sm rounded-[3.5rem] p-10 shadow-2xl">
+            <h3 id="modalTitle" class="text-xl font-black mb-8 uppercase tracking-widest text-[#facc15] text-center italic">Form Admin</h3>
             <div id="modalBody" class="space-y-5"></div>
-            <div class="flex gap-4 mt-8">
-                <button onclick="closeModal()" class="flex-1 py-4 rounded-2xl bg-white/5 hover:bg-white/10 font-bold text-slate-400 transition-all">Batal</button>
-                <button id="modalConfirm" class="flex-1 py-4 rounded-2xl bg-emerald-500 text-slate-900 font-black shadow-lg shadow-emerald-500/20 active:scale-95 transition-all">Simpan Data</button>
+            <div class="flex gap-4 mt-10">
+                <button onclick="closeModal()" class="flex-1 py-4 font-black text-slate-600 uppercase text-xs">Batal</button>
+                <button id="modalConfirm" class="flex-1 py-4 bg-[#facc15] text-black font-black rounded-2xl shadow-xl active:scale-95 transition-all uppercase text-xs tracking-widest">Simpan</button>
             </div>
         </div>
     </div>
