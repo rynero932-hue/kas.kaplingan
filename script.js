@@ -1,140 +1,94 @@
 // script.js
 
-// 1. Data Anggota
-const MEMBERS = [
-    "Ilham", "Ali", "Ibrahim", "Yahya", "Falih", "Sa'ad", 
-    "Nizar", "Hamzah", "Bilal", "Kholid", "Abdurrahman", "Jarir", "Hudzaifah"
-];
-
-// Generate List Bulan (2 tahun range)
-const generateMonthOptions = () => {
-    const options = [];
-    const date = new Date();
-    date.setMonth(date.getMonth() - 12);
-    for (let i = 0; i < 24; i++) {
-        const monthName = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-        options.push(monthName);
-        date.setMonth(date.getMonth() + 1);
-    }
-    return options;
-};
-
-const currentSystemMonth = new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-
-// State Management
-let state = {
-    currentViewMonth: currentSystemMonth,
-    payments: JSON.parse(localStorage.getItem('pw_v32_pay')) || {},
-    expenses: JSON.parse(localStorage.getItem('pw_v32_exp')) || [],
-    agendas: JSON.parse(localStorage.getItem('pw_v32_age')) || [
-        { id: 1, title: "Kumpul Rutin", date: "2024-01-20", desc: "Membahas rencana kegiatan Pemuda Wonogiri." }
-    ],
-    isAdmin: false
-};
-
+// 1. Inisialisasi Anggota
+const MEMBERS = ["Ilham", "Ali", "Ibrahim", "Yahya", "Falih", "Saad", "Nizar", "Hamzah", "Bilal", "Kholid", "Abdurrahman", "Hudzaifah"];
 const MONTHLY_FEE = 10000;
 
-// Format Rupiah
-const formatIDR = (num) => {
-    return new Intl.NumberFormat('id-ID', {
-        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
-    }).format(num);
+let state = {
+    currentMonth: new Date().toLocaleDateString('id-ID', { month: 'long', year: 'numeric' }),
+    payments: JSON.parse(localStorage.getItem('pw_pro_pay')) || {},
+    expenses: JSON.parse(localStorage.getItem('pw_pro_exp')) || [],
+    agendas: JSON.parse(localStorage.getItem('pw_pro_age')) || [],
+    isAdmin: false,
+    searchQuery: ""
 };
 
-// Render Fungsi Utama
+const formatIDR = (n) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+
+// 2. Intro Animation
+document.getElementById('entryBtn').addEventListener('click', () => {
+    document.getElementById('splashScreen').classList.add('exit');
+    setTimeout(() => {
+        document.getElementById('splashScreen').style.display = 'none';
+        const app = document.getElementById('appContent');
+        app.classList.remove('hidden');
+        setTimeout(() => app.classList.add('open'), 50);
+    }, 800);
+});
+
+// 3. Render Engine
 const render = () => {
-    // 1. Kalkulasi Saldo
+    // Stats Calculation
     const totalPemasukanAll = Object.values(state.payments).filter(v => v === true).length * MONTHLY_FEE;
-    const totalPengeluaran = state.expenses.reduce((sum, item) => sum + item.amount, 0);
+    const totalPengeluaran = state.expenses.reduce((s, e) => s + e.amount, 0);
     const totalSaldo = totalPemasukanAll - totalPengeluaran;
+    
+    const lunasBulanIni = MEMBERS.filter(m => state.payments[`${m}_${state.currentMonth}`]).length;
+    const persentase = Math.round((lunasBulanIni / MEMBERS.length) * 100);
 
-    // Pemasukan bulan yang sedang dilihat
-    const pemasukanBulanIni = MEMBERS.filter(m => state.payments[`${m}_${state.currentViewMonth}`]).length * MONTHLY_FEE;
-
-    // 2. Update Dashboard Stats
+    // Update Dashboard
     document.getElementById('totalSaldo').innerText = formatIDR(totalSaldo);
-    document.getElementById('totalPemasukan').innerText = formatIDR(pemasukanBulanIni);
+    document.getElementById('totalPemasukan').innerText = formatIDR(lunasBulanIni * MONTHLY_FEE);
     document.getElementById('totalPengeluaran').innerText = formatIDR(totalPengeluaran);
-    document.getElementById('labelPemasukanBulan').innerText = `Pemasukan ${state.currentViewMonth}`;
+    document.getElementById('progressText').innerText = persentase + "%";
+    document.getElementById('progressBar').style.width = persentase + "%";
 
-    // 3. Render Grid Anggota
-    const memberGrid = document.getElementById('memberGrid');
-    memberGrid.innerHTML = MEMBERS.map(name => {
-        const isPaid = state.payments[`${name}_${state.currentViewMonth}`];
+    // Filtered Member List
+    const filtered = MEMBERS.filter(m => m.toLowerCase().includes(state.searchQuery.toLowerCase()));
+    const listEl = document.getElementById('memberList');
+    listEl.innerHTML = filtered.map((name, idx) => {
+        const paid = state.payments[`${name}_${state.currentMonth}`];
         return `
-            <div onclick="togglePayment('${name}')" class="member-card p-6 rounded-[2.2rem] text-center transition-all ${isPaid ? 'is-paid' : ''}">
-                <div class="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center text-xl font-black bg-[#0b0f1a] border border-white/5 text-emerald-500 shadow-inner">
-                    ${name.charAt(0)}
+            <div class="member-card flex items-center justify-between p-5 rounded-[1.5rem] ${paid ? 'is-paid' : ''}">
+                <div class="flex items-center gap-4">
+                    <span class="text-[9px] font-black text-slate-800">${(idx + 1).toString().padStart(2,'0')}</span>
+                    <p class="font-bold text-sm tracking-tight">${name}</p>
                 </div>
-                <h4 class="font-bold text-xs mb-3 text-white tracking-tight h-10 flex items-center justify-center">${name}</h4>
-                <div class="status-indicator inline-flex items-center px-4 py-1.5 rounded-xl text-[8px] font-black uppercase tracking-widest ${isPaid ? 'bg-emerald-500 text-slate-900' : 'bg-white/5 text-slate-500'}">
-                    ${isPaid ? 'Lunas' : 'Belum'}
-                </div>
+                <button onclick="togglePayment('${name}')" class="px-5 py-2.5 rounded-xl text-[9px] font-black uppercase transition-all ${paid ? 'bg-[#facc15] text-black shadow-lg shadow-yellow-500/20' : 'bg-white/5 text-slate-600'}">
+                    ${paid ? 'Lunas' : 'Belum'}
+                </button>
             </div>
         `;
     }).join('');
 
-    // 4. Render Pengeluaran
-    const expenseList = document.getElementById('expenseList');
-    expenseList.innerHTML = state.expenses.length ? state.expenses.map(e => `
-        <div class="flex items-center justify-between p-4 bg-white/2 rounded-[1.2rem] border border-white/5">
-            <div class="max-w-[65%]">
-                <p class="text-[11px] font-bold text-slate-200 truncate">${e.note}</p>
-                <p class="text-[8px] text-slate-500 font-bold uppercase mt-1 tracking-tighter">${e.date}</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <p class="text-rose-400 font-black text-xs">-${formatIDR(e.amount).replace('Rp', '')}</p>
-                ${state.isAdmin ? `<button onclick="deleteExpense(${e.id})" class="text-slate-600 hover:text-rose-500"><i data-lucide="trash-2" size="14"></i></button>` : ''}
-            </div>
+    // Logs
+    document.getElementById('expenseLog').innerHTML = state.expenses.map(e => `
+        <div class="p-4 bg-white/2 rounded-2xl flex justify-between items-center border border-white/5">
+            <div><p class="text-[11px] font-bold text-slate-200">${e.note}</p><p class="text-[8px] text-slate-600 font-bold mt-1 uppercase italic">${e.date}</p></div>
+            <p class="text-xs font-black text-rose-500">-${formatIDR(e.amount)}</p>
         </div>
-    `).join('') : '<p class="p-10 text-center text-slate-600 text-[10px] font-black uppercase tracking-widest opacity-50 italic">Kosong</p>';
+    `).join('') || '<p class="text-center py-10 text-[9px] font-black text-slate-800 uppercase tracking-widest">Kosong</p>';
 
-    // 5. Render Agenda
-    const agendaList = document.getElementById('agendaList');
-    agendaList.innerHTML = state.agendas.length ? state.agendas.map(a => `
-        <div class="relative pl-6 border-l-2 border-emerald-500/20">
-            <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_12px_#10b981]"></div>
-            <div class="flex justify-between items-start">
-                <div>
-                    <h4 class="text-xs font-black text-white uppercase">${a.title}</h4>
-                    <p class="text-[9px] text-emerald-500 font-black uppercase mt-1 mb-2 tracking-widest">${a.date}</p>
-                    <p class="text-[11px] text-slate-400 leading-relaxed font-medium">${a.desc}</p>
-                </div>
-                ${state.isAdmin ? `<button onclick="deleteAgenda(${a.id})" class="text-slate-700 active:text-rose-500"><i data-lucide="x-circle" size="18"></i></button>` : ''}
-            </div>
+    document.getElementById('agendaLog').innerHTML = state.agendas.map(a => `
+        <div class="p-5 bg-white/2 rounded-2xl border-l-2 border-[#facc15]">
+            <p class="text-[10px] font-black text-[#facc15] uppercase tracking-widest mb-1">${a.title}</p>
+            <p class="text-[11px] text-slate-400 leading-relaxed">${a.desc}</p>
         </div>
-    `).join('') : '<p class="text-center text-slate-600 text-[10px] font-black uppercase tracking-widest opacity-50 italic">Belum ada agenda</p>';
+    `).join('') || '<p class="text-center py-10 text-[9px] font-black text-slate-800 uppercase tracking-widest">Kosong</p>';
 
     lucide.createIcons();
 };
 
-// --- LOGIC FUNCTIONS ---
-
-// Inisialisasi Selector Bulan
-const monthSelector = document.getElementById('monthSelector');
-generateMonthOptions().forEach(opt => {
-    const el = document.createElement('option');
-    el.value = opt;
-    el.innerText = opt;
-    if(opt === currentSystemMonth) el.selected = true;
-    monthSelector.appendChild(el);
-});
-
-monthSelector.addEventListener('change', (e) => {
-    state.currentViewMonth = e.target.value;
-    render();
-});
-
-// Admin Control
+// 4. Admin Logic
 document.getElementById('adminBtn').addEventListener('click', () => {
     if(!state.isAdmin) {
-        const pass = prompt("Password *****:");
-        if(pass === "admin932") {
+        const p = prompt("Password Admin:");
+        if(p === "admin123") {
             state.isAdmin = true;
             document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
             document.body.classList.add('admin-mode');
             render();
-        } else if(pass !== null) { alert("Akses Ditolak!"); }
+        }
     } else {
         state.isAdmin = false;
         document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
@@ -144,73 +98,99 @@ document.getElementById('adminBtn').addEventListener('click', () => {
 });
 
 const togglePayment = (name) => {
-    if(!state.isAdmin) return;
-    const key = `${name}_${state.currentViewMonth}`;
+    if(!state.isAdmin) return alert("Hanya Admin yang punya akses!");
+    const key = `${name}_${state.currentMonth}`;
     state.payments[key] = !state.payments[key];
-    saveData();
+    save();
 };
 
+// 5. WhatsApp Sharing Feature
+document.getElementById('shareBtn').addEventListener('click', () => {
+    const belumBayar = MEMBERS.filter(m => !state.payments[`${m}_${state.currentMonth}`]);
+    const totalSaldo = document.getElementById('totalSaldo').innerText;
+    
+    let text = `*LAPORAN KAS PEMUDA WONOGIRI* 🤙🏻%0A%0A`;
+    text += `Bulan: *${state.currentMonth}*%0A`;
+    text += `Total Saldo: *${totalSaldo}*%0A%0A`;
+    text += `*Anggota Belum Bayar:*%0A`;
+    
+    if(belumBayar.length === 0) { text += `Semua sudah Lunas! Alhamdulillah.%0A`; } 
+    else { belumBayar.forEach((m, i) => { text += `${i+1}. ${m}%0A`; }); }
+    
+    text += `%0A_Silakan segera hubungi Bendahara. Syukron._`;
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+});
+
+// 6. Data Management (Backup/Restore)
+const exportData = () => {
+    const data = JSON.stringify(state);
+    const blob = new Blob([data], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `backup_kas_wonogiri_${Date.now()}.json`;
+    a.click();
+};
+
+document.getElementById('importFile').addEventListener('change', (e) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        try {
+            const importedState = JSON.parse(event.target.result);
+            state = { ...state, ...importedState, isAdmin: false };
+            save();
+            alert("Data berhasil dipulihkan!");
+        } catch(e) { alert("File tidak valid!"); }
+    };
+    reader.readAsText(e.target.files[0]);
+});
+
+// 7. Modals
 const openExpenseModal = () => {
     document.getElementById('modalTitle').innerText = "Catat Keluar";
-    document.getElementById('modalBody').innerHTML = `
-        <div class="space-y-1"><label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest">Alasan Pengeluaran</label>
-        <input type="text" id="expNote" placeholder="Contoh: Beli Teh Pucuk" class="w-full bg-white/5 border border-white/5 p-4 rounded-2xl text-white"></div>
-        <div class="space-y-1"><label class="text-[10px] font-black text-slate-500 uppercase ml-2 tracking-widest">Nominal (Angka Saja)</label>
-        <input type="number" id="expAmount" placeholder="Contoh: 50000" class="w-full bg-white/5 border border-white/5 p-4 rounded-2xl text-white font-bold"></div>
-    `;
+    document.getElementById('modalBody').innerHTML = `<input type="text" id="eN" placeholder="Keperluan..."><input type="number" id="eA" placeholder="Nominal (Tanpa Titik)...">`;
     document.getElementById('modalConfirm').onclick = () => {
-        const note = document.getElementById('expNote').value;
-        const amount = parseInt(document.getElementById('expAmount').value);
-        if(note && amount) {
-            state.expenses.unshift({ id: Date.now(), note, amount, date: new Date().toLocaleDateString('id-ID') });
-            saveData();
-            closeModal();
-        }
+        const n = document.getElementById('eN').value, a = parseInt(document.getElementById('eA').value);
+        if(n && a) { state.expenses.unshift({ id: Date.now(), note: n, amount: a, date: new Date().toLocaleDateString('id-ID') }); save(); closeModal(); }
     };
     toggleModal(true);
 };
 
 const openAgendaModal = () => {
-    document.getElementById('modalTitle').innerText = "Agenda Baru";
-    document.getElementById('modalBody').innerHTML = `
-        <input type="text" id="ageTitle" placeholder="Judul Agenda" class="w-full bg-white/5 border border-white/5 p-4 rounded-2xl">
-        <input type="date" id="ageDate" class="w-full bg-white/5 border border-white/5 p-4 rounded-2xl">
-        <textarea id="ageDesc" placeholder="Deskripsi atau info tambahan..." class="w-full bg-white/5 border border-white/5 p-4 rounded-2xl h-28"></textarea>
-    `;
+    document.getElementById('modalTitle').innerText = "Buat Agenda";
+    document.getElementById('modalBody').innerHTML = `<input type="text" id="aT" placeholder="Judul Agenda..."><textarea id="aD" placeholder="Detail Info..."></textarea>`;
     document.getElementById('modalConfirm').onclick = () => {
-        const title = document.getElementById('ageTitle').value;
-        const date = document.getElementById('ageDate').value;
-        const desc = document.getElementById('ageDesc').value;
-        if(title && date) {
-            state.agendas.unshift({ id: Date.now(), title, date, desc });
-            saveData();
-            closeModal();
-        }
+        const t = document.getElementById('aT').value, d = document.getElementById('aD').value;
+        if(t && d) { state.agendas.unshift({ id: Date.now(), title: t, desc: d }); save(); closeModal(); }
     };
     toggleModal(true);
 };
 
-const deleteExpense = (id) => { state.expenses = state.expenses.filter(e => e.id !== id); saveData(); };
-const deleteAgenda = (id) => { state.agendas = state.agendas.filter(a => a.id !== id); saveData(); };
-const toggleModal = (show) => { document.getElementById('modalOverlay').classList.toggle('hidden', !show); document.getElementById('modalOverlay').classList.toggle('flex', show); };
+// Utilities
+const toggleModal = (s) => document.getElementById('modalOverlay').classList.toggle('hidden', !s);
 const closeModal = () => toggleModal(false);
-
-const saveData = () => {
-    localStorage.setItem('pw_v32_pay', JSON.stringify(state.payments));
-    localStorage.setItem('pw_v32_exp', JSON.stringify(state.expenses));
-    localStorage.setItem('pw_v32_age', JSON.stringify(state.agendas));
+const save = () => {
+    localStorage.setItem('pw_pro_pay', JSON.stringify(state.payments));
+    localStorage.setItem('pw_pro_exp', JSON.stringify(state.expenses));
+    localStorage.setItem('pw_pro_age', JSON.stringify(state.agendas));
     render();
 };
 
-// Inisialisasi Tanggal Header
-const updateHeaderDate = () => {
-    const now = new Date();
-    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    document.getElementById('headerTodayDate').innerText = now.toLocaleDateString('id-ID', options);
-};
+// Search Logic
+document.getElementById('searchMember').oninput = (e) => { state.searchQuery = e.target.value; render(); };
 
-// Mulai Aplikasi
-updateHeaderDate();
+// Month Selector Setup
+const mSel = document.getElementById('monthSelector');
+const d = new Date(); d.setMonth(d.getMonth() - 12);
+for(let i=0; i<24; i++) {
+    const t = d.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+    const o = document.createElement('option'); o.value = t; o.innerText = t;
+    if(t === state.currentMonth) o.selected = true;
+    mSel.appendChild(o);
+    d.setMonth(d.getMonth() + 1);
+}
+mSel.onchange = (e) => { state.currentMonth = e.target.value; render(); };
 
+// Start
+document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 render();
-
