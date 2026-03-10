@@ -1,7 +1,7 @@
 // script.js
 
 // 1. Inisialisasi Anggota
-const MEMBERS = ["Ilham", "Ali", "Ibrahim", "Yahya", "Falih", "Saad", "Nizar", "Hamzah", "Bilal", "Kholid", "Abdurrahman", "Hudzaifah"];
+const MEMBERS = ["Ilham", "Ali", "Ibrahim", "Yahya", "Falih", "Saad", "Nizar", "Hamzah", "Bilal", "Kholid", "Jarir", "Abdurrahman", "Hudzaifah"];
 const MONTHLY_FEE = 10000;
 
 let state = {
@@ -194,3 +194,4 @@ mSel.onchange = (e) => { state.currentMonth = e.target.value; render(); };
 // Start
 document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 render();
+
