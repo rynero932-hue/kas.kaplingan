@@ -1,40 +1,47 @@
 /* style.css */
-@keyframes bounce-slow {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-.animate-bounce-slow { animation: bounce-slow 4s infinite ease-in-out; }
+::-webkit-scrollbar { width: 0px; }
 
-input, textarea {
-    background: #181818 !important;
+body { -webkit-tap-highlight-color: transparent; }
+
+/* Door Animations */
+.door-open-left {
+    transform: translateX(-100%);
+}
+.door-open-right {
+    transform: translateX(100%);
+}
+
+.member-row {
+    background: #0d0d0d;
+    border: 1px solid rgba(255,255,255,0.02);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.member-row:active {
+    transform: scale(0.97);
+    background: #121212;
+}
+
+input {
+    background: #1a1a1a !important;
     border: 1px solid rgba(255,255,255,0.05) !important;
     border-radius: 1.25rem !important;
     padding: 1.25rem !important;
     color: white !important;
     width: 100%;
     outline: none;
+    font-weight: 800;
 }
 input:focus { border-color: #facc15 !important; }
 
-.member-card {
-    background: #0d0d0d;
-    border: 1px solid rgba(255,255,255,0.02);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.member-card:hover {
-    background: #121212;
-    transform: translateX(5px);
-}
-.member-card.is-paid {
-    border-left: 4px solid #facc15;
+#appWrapper.show {
+    display: block;
+    opacity: 1;
 }
 
-#appContent.open {
-    opacity: 1 !important;
-    transform: scale(1) !important;
-}
-
-#splashScreen.exit {
-    transform: translateY(-100%) scale(1.1);
-    opacity: 0;
+/* For Extra Bold Names */
+.name-text {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
